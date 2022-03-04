@@ -4,7 +4,7 @@
 MIT
 
 ## 使用ライブラリ等
-### AngelSharp
+### AnglSharp
 https://github.com/AngleSharp/AngleSharp
 
 ### jint
