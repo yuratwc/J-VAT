@@ -1,0 +1,120 @@
+﻿<Window x:Class="JouhouVPNTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JouhouVPNTool"
+        mc:Ignorable="d"
+        Title="J-VAT" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
+            <MenuItem Header="ファイル(_F)">
+                <MenuItem Header="新規フォルダ(_N)" Click="contextMenuBtnNewDirectory_Click"/>
+                <Separator/>
+                <MenuItem Header="終了(_X)" Click="btnMenuExit_Click"/>
+            </MenuItem>
+            <MenuItem Header="操作(_C)">
+                <MenuItem Header="戻る(_B)" Click="contextMenuBtnUndo_Click"/>
+                <MenuItem Header="進む(_F)" Click="contextMenuBtnRedo_Click"/>
+                <Separator/>
+                <MenuItem Header="ホームにジャンプ(_J)" Click="contextMenuBtnHome_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="ヘルプ(_H)">
+                <MenuItem Header="バージョン情報(_A)" Click="btnMenuVersionInfo_Click"/>
+            </MenuItem>
+        </Menu>
+        <ToolBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
+            <Button x:Name="btnBack" Click="btnBack_Click" ToolTip="戻る">
+                <Image Source="Images\left-arrow.png"/>
+            </Button>
+            <Button x:Name="btnForward" Click="btnForward_Click" ToolTip="進む">
+                <Image Source="Images\right-arrow.png"/>
+            </Button>
+            <Separator/>
+            <Button x:Name="btnToolReload" Click="btnToolReload_Click" ToolTip="更新">
+                <Image Source="Images\circular-arrow.png"/>
+            </Button>
+            <Separator/>
+
+            <Button x:Name="btnToolHome" Click="btnToolHome_Click" ToolTip="ホーム">
+                <Image Source="Images\home.png"/>
+            </Button>
+            <Separator/>
+            <TextBox x:Name="textboxPath" HorizontalContentAlignment="Stretch" Width="225" AllowDrop="False" IsReadOnly="True" />
+        </ToolBar>
+        <TreeView x:Name="directoryTreeView" Grid.Row="2" Grid.Column="0" ItemsSource="{Binding TreeFileItems}">
+
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="local:TreeElementModel" ItemsSource="{Binding Children}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="{Binding Icon}" Width="16" Height="16" Grid.Column="0" />
+                        <TextBlock Text="{Binding Text}" Grid.Column="1"/>
+                    </Grid>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.Resources>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="Expanded" Handler="TreeViewItem_Expanded"/>
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+                </Style>
+            </TreeView.Resources>
+        </TreeView>
+        <ListView x:Name="fileListView" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding CurrentFiles}" PreviewDragOver="fileListView_PreviewDragOver" Drop="fileListView_Drop" GridViewColumnHeader.Click="fileListViewHeader_Click" AllowDrop="True" PreviewMouseDown="fileListView_PreviewMouseDown" PreviewMouseMove="fileListView_PreviewMouseMove" PreviewMouseUp="fileListView_PreviewMouseUp" PreviewQueryContinueDrag="fileListView_QueryContinueDrag">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="開く(_O)" Click="treeContextOpenBtn_Click"/>
+                    <MenuItem Header="名前を付けて保存(_S)" Click="treeContextSaveBtn_Click"/>
+                    <Separator/>
+                    <MenuItem x:Name="contextMenuBtnDel" Header="削除(_D)" Click="contextMenuBtnDel_Click"/>
+                    <Separator/>
+                    <MenuItem Header="新規フォルダ(_X)" Click="contextMenuBtnNewDirectory_Click"/>
+                    <Separator/>
+                    <MenuItem Header="ファイルのアップロード(_N)" Click="contextMenuBtnUploadFile_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="名前" Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding Icon}" Width="16" Height="16" Grid.Column="0" />
+                                    <TextBlock Text="{Binding Name}" Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="更新日時" DisplayMemberBinding="{Binding TimeStampString}" Width="Auto"/>
+                    <GridViewColumn Header="種類" DisplayMemberBinding="{Binding FileType}" Width="Auto"/>
+                    <GridViewColumn Header="サイズ" DisplayMemberBinding="{Binding Size}" Width="Auto"/>
+                </GridView>
+            </ListView.View>
+            
+        </ListView>
+
+    </Grid>
+</Window>
